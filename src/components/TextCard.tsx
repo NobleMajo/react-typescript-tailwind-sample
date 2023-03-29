@@ -1,44 +1,47 @@
 import * as React from "react";
+import { TailwindComp } from "./Tailwind"
 
 interface Props {
-    title: string,
-    text: string,
-    size: number,
+    title?: string,
+    children?: string,
+    size?: number,
 }
 
 interface State {
+    title: string,
+    children: string,
+    size: number,
 }
 
-export class TextCard extends React.Component<Props, State> {
+export class TextCard extends TailwindComp<Props, State> {
     public static defaultProps = {
         title: "Example",
-        text: "A nice text here!",
+        children: "No text defined",
         size: 3,
     }
 
     constructor(props) {
         super(props);
+        this.state = {
+            ...TextCard.defaultProps,
+            ...props
+        }
     }
 
     render = () => {
         const CustomHeadingTag = `h${this.props.size}` as keyof JSX.IntrinsicElements;
         return (
-            <div className="card" style={{
-                border: "1px solid black",
-                margin: "10px",
-                padding: "10px",
-                width: "100%",
-            }}>
-                <CustomHeadingTag style={{
-                    marginBottom: "1px",
-                    marginTop: "1px",
-                    paddingBottom: "1px",
-                    paddingTop: "1px",
-                }}>
-
+            <div className={
+                "my-4 mx-2 " +
+                "bg-white px-6 pt-10 pb-8 shadow-xl ring-1 " +
+                "ring-gray-900/5 sm:rounded-lg sm:px-10" +
+                (this.props.className ? " " + this.props.className : "")
+            }>
+                <CustomHeadingTag>
+                    {this.state.title}
                 </CustomHeadingTag>
-                <hr></hr>
-                <p>{this.props.text}</p>
+                <div className="block">---</div>
+                <p>{this.state.children}</p>
             </div >
         )
     }

@@ -1,8 +1,9 @@
 import * as React from "react";
+import { TailwindComp } from "./Tailwind"
 
 interface Props {
     title?: string,
-    text?: string,
+    children?: string,
     size?: number,
     imagePercents?: number,
     imageSrc: string,
@@ -12,7 +13,7 @@ interface Props {
 
 interface State {
     title: string,
-    text: string,
+    children: string,
     size: number,
     imagePercents: number,
     imageSrc: string,
@@ -20,7 +21,7 @@ interface State {
     left: boolean,
 }
 
-export class ImageCard extends React.Component<Props, State> {
+export class ImageCard extends TailwindComp<Props, State> {
     public static defaultProps = {
         title: "Example",
         text: "A nice text here!",
@@ -32,56 +33,51 @@ export class ImageCard extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
-        this.setState(props)
+        this.state = {
+            ...ImageCard.defaultProps,
+            ...props
+        }
     }
 
     render = () => {
-        const CustomHeadingTag = `h${this.props.size}` as keyof JSX.IntrinsicElements;
-        if (this.props.imagePercents < 1) {
+        const CustomHeadingTag = `h${this.state.size}` as keyof JSX.IntrinsicElements;
+        if (!this.state.imagePercents) {
+            this.setState({
+                imagePercents: 50
+            })
+        } else if (this.state.imagePercents < 1) {
             this.setState({
                 imagePercents: 1
             })
-        } else if (this.props.imagePercents > 99) {
+        } else if (this.state.imagePercents > 99) {
             this.setState({
                 imagePercents: 99
             })
         }
         const imageComponent = <img
-            src={this.props.imageSrc}
-            alt={this.props.altText}
-            style={{
-                width: this.props.imagePercents + "%"
-            }}>
+            src={this.state.imageSrc}
+            alt={this.state.altText}
+        >
         </img>
 
         return (
-            <div className="card" style={{
-                border: "1px solid black",
-                margin: "10px",
-                padding: "10px",
-                width: "100%",
-                display: "flex",
-            }}>
-                {this.props.left && imageComponent}
-                <span
-                    style={{
-                        width: (100 - this.props.imagePercents) + "%"
-                    }}
-                >
-                    <CustomHeadingTag style={{
-                        marginBottom: "1px",
-                        marginTop: "1px",
-                        paddingBottom: "1px",
-                        paddingTop: "1px",
-                    }}>
-                        {this.props.title}
+            <div className={
+                "my-4 mx-2 bg-white dark:bg-gray-800 " +
+                "bg-white px-6 pt-10 pb-8 shadow-xl ring-1 " +
+                "ring-gray-900/5 sm:rounded-lg sm:px-10" +
+                (this.props.className ? " " + this.props.className : "")
+            }>
+                {this.state.left && imageComponent}
+                <span>
+                    <CustomHeadingTag>
+                        {this.state.title}
                     </CustomHeadingTag>
-                    <hr></hr>
+                    <div className="block">---</div>
                     <p >
-                        {this.props.text}
+                        {this.state.children}
                     </p>
                 </span>
-                {!this.props.left && imageComponent}
+                {!this.state.left && imageComponent}
             </div >
         )
     }
